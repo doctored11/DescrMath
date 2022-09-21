@@ -3,6 +3,15 @@ let Y = 3,
   X = 3;
 
 //
+//🛑 - выполнить в первую очередь
+//❌ - выполнить во вторую очередь
+//👨🏻‍💻 - в третью очередь рефакторинг и разбиение на финкции и скрипты.js
+//   - мини шаг - проверить на работоспособность и устойчивость к вводу
+//🌈 - в четвертую очередь стили css (width 1200 - 2000px)
+//⭕️ - в пятую сдеалать красивым все отображение на канвас
+//✅ - в шестую сдеалать адаптив css ( width 200 - 2000+ )
+
+//
 let stepX, stepY;
 const canvas = document.querySelector('.canvas');
 const context = canvas.getContext('2d');
@@ -11,40 +20,8 @@ canvas.width = 500;
 canvas.height = 500;
 
 //
-document.addEventListener('DOMContentLoaded', () => {
-  start();
-});
+
 {
-  function start() {
-    // let matrix = [
-    //   [0, 5, 2],
-    //   [5, 0, 3],
-    //   [2, 3, 0],
-    // ];
-    // let matrix2 = [
-    //   [0, -1, 10, Infinity, 3],
-    //   [8, 0, 2, Infinity, 3],
-    //   [10, 3, 0, 5, 3],
-    //   [Infinity, Infinity, 5, 0, 9],
-    //   [2, 3, 5, 0, 9],
-    // ];
-    // let startMatrix = JSON.parse(JSON.stringify(matrix2));
-    // console.log(matrix);
-    // // рефлексивность - передаем единицу, антирефлексивность - 0
-    // checkDiagonal(matrix, 'main', 0);
-    // checkDiagonal(matrix, 'main', 1);
-    // checkSymmetry(matrix, '');
-    // searchSubsets('123'); //тут строка входной параметр - надо в переменную поместить.
-    // checkTransit(matrix); // перед этим выполнить проверку на симметричность +единицы
-    // floydWarshallAlgorithm(matrix2); // сюда уже другую матрицу( на главной нули) - остальные значения забрать у пользователя
-    // calcCanvasStep(5); //длину массива    !!!!!
-    // matrix = floydWarshallAlgorithm(matrix2); // алгоритм изменяет начальную матрицу
-    // window.coordsArray = paintArrayOfPoints(matrix);
-    // console.log(coordsArray);
-    // CalcExistingEdge(startMatrix); // стартовую матрицу
-    // addTextToPoints();
-    // addTextToEdge(startMatrix); // стартовую матрицу + доделать
-  } //
   //events
   let randomMatrixBtn = document.querySelector('.ub__btn-random-generate');
   let inputN = document.querySelector('.form-control');
@@ -57,8 +34,125 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fillMatrix(matrix);
     console.log(matrix);
+    tableClearVisualFull(matrix);
+    createTable(matrix);
+    matrixStatusCheck(matrix);
   });
 
+  //  //Dom
+  //блок со случайной матрицей
+  let randMatrix = document.querySelector('.table-rand');
+  function createTable(matrix) {
+    for (let j = 0; j < matrix.length; ++j) {
+      let stroke = document.createElement('tr');
+      randMatrix.append(stroke);
+      for (let i = 0; i < matrix.length; ++i) {
+        let buf = document.createElement('th');
+        buf.classList.add('cell');
+        buf.innerHTML = `<span class ="descr-num rand-num" id = "${j}-${i}">${matrix[j][i]}</span>`;
+        stroke.append(buf);
+      }
+    }
+  }
+
+  // функции dom матрица
+  let statusMessage = document.querySelectorAll('.status');
+  function matrixStatusCheck(matrix) {
+    for (let i = 0; i < statusMessage.length; ++i) {
+      checkDiagonal(matrix, 'main', 0)
+        ? (statusMessage[0].textContent = ' антирефлексивна')
+        : (statusMessage[0].textContent = 'условия антирефлексивности не выполненны');
+
+      checkDiagonal(matrix, 'main', 1)
+        ? (statusMessage[1].textContent = ' рефлексивна')
+        : (statusMessage[1].textContent = 'условия рефлексивности не выполненны');
+      checkSymmetry(matrix, '')
+        ? (statusMessage[2].textContent = 'симметрична')
+        : (statusMessage[2].textContent = 'не симметрична');
+
+      checkSymmetry(matrix, 'anti')
+        ? (statusMessage[3].textContent = 'антисимметрична')
+        : (statusMessage[3].textContent = 'не антисимметрична');
+
+      if (checkSymmetry(matrix, '') && checkDiagonal(matrix, 'main', 1)) {
+        checkTransit(matrix)
+          ? (statusMessage[4].textContent = 'транзитивна')
+          : (statusMessage[4].textContent = 'не транзитивна');
+      } else {
+        statusMessage[4].textContent = 'не транзитивна';
+      }
+    }
+  }
+  function tableClearVisualFull() {
+    let matrix = document.querySelector('.table-rand');
+    let buf = matrix.childNodes.length;
+    for (let i = 0; i < buf; ++i) {
+      matrix.childNodes[0].remove();
+    }
+  }
+  // блок DOM множества
+  let inputPlenty = document.querySelector('.form-plenty');
+
+  let btnPlenty = document.querySelector('.btn-plenty');
+  btnPlenty.addEventListener('click', () => {
+    let mainPlanty = inputPlenty.value;
+    let out = document.querySelector('.plenty-output');
+
+    out.innerHTML = `|   ${String(searchSubsets(mainPlanty))
+      .split(',')
+      .join('<span class="accent0"> | </span>')}  |`;
+  });
+  // транзитивное замыкание DOM
+  let inputClose = document.querySelector('.form-close');
+  let btnClose = document.querySelector('.btn-close');
+  btnClose.addEventListener('click', () => {
+    let inputArray = document.querySelector('.input-canvas');
+    let closeN = Number(inputClose.value); //  ❌ поставить ограничения от 3 до 22 включительно( просто для красоты верхняя планка) ❌ второй очередью
+
+    for (let i = 0; i < closeN; ++i) {
+      let inputStroke = document.createElement('div');
+
+      inputArray.append(inputStroke);
+      for (let j = 0; j < closeN; ++j) {
+        let inputCell = document.createElement('input');
+        inputStroke.append(inputCell);
+        inputCell.classList.add(`cell`);
+        inputCell.classList.add(`close-cell`);
+        inputCell.classList.add(`cell-${j}-${i}`);
+      }
+    }
+    let btnsBlock = document.querySelector('.close-btns');
+    let takeBtn = document.createElement('button');
+    takeBtn.classList.add(`btn-calc`);
+    takeBtn.classList.add(`calc`);
+    takeBtn.textContent = 'рассчитать';
+    btnsBlock.append(takeBtn);
+    takeBtn.addEventListener('click', () => {
+      //написать функцию для очистки матрицы инпутов ❌ во вторую очередь
+      let matrix = createMatrix(closeN, closeN);
+      takeProperties(matrix); // 🛑сразу главную диагональ заполнить нулями (и запретить их изменять) !перваяочередь🛑
+      let startMatrix = JSON.parse(JSON.stringify(matrix));
+      calcCanvasStep(closeN);
+      matrix = floydWarshallAlgorithm(matrix); // алгоритм изменяет начальную матрицу
+      window.coordsArray = paintArrayOfPoints(matrix);
+
+      CalcExistingEdge(startMatrix);
+      addTextToPoints();
+      addTextToEdge(startMatrix);
+
+      // выводить таблицу с быстрыми путями куда нибуть (+функция) 🛑 в первую очередь
+    });
+  });
+
+  function takeProperties(matrix) {
+    let cellArray = document.querySelectorAll('.close-cell');
+    for (let i = 0; i < cellArray.length; ++i) {
+      let y = cellArray[i].classList[2].split('-')[1];
+      let x = cellArray[i].classList[2].split('-')[2];
+      matrix[x][y] = Number(cellArray[i].value);
+    }
+    console.log(matrix);
+  }
   //   Cоздание и зполнение
 
   function createMatrix(X, Y) {
@@ -86,23 +180,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let n = matrix.length;
     let X, status;
     mode == 1 ? (status = '!Рефлексивность') : (status = '!антиРефлексивность');
+    let buf;
 
     for (let y = 0; y < matrix.length; ++y) {
       for (let x = 0; x < matrix[0].length; ++x) {
         direction == 'main' ? (X = x) : (X = n - x - 1);
         if (X == y) {
           if (matrix[x][y] != mode) {
-            console.log(`${reverse(mode)} на ${direction} диагонале`);
-            return;
+            buf = `есть ${reverse(mode)} на ${direction} диагонале`;
+            console.log(buf);
+            return 0;
           }
         }
       }
     }
-    console.log(`${mode} на ${direction} диагонале -- ${status} `);
+    buf = `есть ${mode} на ${direction} диагонале -- ${status} `;
+    console.log(buf);
+    return 1;
   }
 
   function checkSymmetry(matrix, mode) {
-    let n = matrix.length - 1;
     let buf;
 
     for (let y = 0; y < matrix.length; ++y) {
@@ -110,11 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
         mode == 'anti' && x != y ? (buf = reverse(matrix[y][x])) : (buf = matrix[y][x]);
         if (matrix[x][y] != buf) {
           console.log(`не симметрична относительно главной`);
-          return;
+          return 0;
         }
       }
     }
-    console.log(`симметрична относительно главной`);
+    //проверить удовия анти симметричность
+    console.log(`${mode}симметрична относительно главной`);
+    return 1;
   }
 
   function convertToBinary(number) {
@@ -135,50 +234,41 @@ document.addEventListener('DOMContentLoaded', () => {
     return Number(number.join(''));
   }
 
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!______________________________________________________________!!!!!!!!!!!!!!!!!
+  // !!______________________________________________________________!!
+
   function checkTransit(matrix) {
     //на вход только симметричную матрицу с единицами на главной диагонале
     for (let y = 0; y < matrix.length; ++y) {
       for (let x = 0; x < matrix[0].length; ++x) {
         if (matrix[x][y] == 1) {
           console.log('1');
-          if (matrix[x].join('') != matrix[y].join('')) return false;
+          if (matrix[x].join('') != matrix[y].join('')) return 0;
         }
       }
     }
     console.log('транзитивна');
+    return 1;
   }
 
-  // matrix function generates all n bit Gray codes and prints the
-  // generated codes
   function generateTableGray(n) {
-    // base case
     if (n <= 0) return;
 
-    // "arr" will store all generated codes
     let arr = [];
 
-    // start with one-bit pattern
+    //cтартовый патерн
     arr.push('0');
     arr.push('1');
 
-    // Every iteration of matrix loop generates 2*i codes from previously
-    // generated i codes.
     let i, j;
     for (i = 2; i < 1 << n; i = i << 1) {
-      // Enter the prviously generated codes again in arr[] in reverse
-      // order. Nor arr[] has double number of codes.
       for (j = i - 1; j >= 0; j--) arr.push(arr[j]);
-
-      // append 0 to the first half
+      //первая часть
       for (j = 0; j < i; j++) arr[j] = '0' + arr[j];
 
-      // append 1 to the second half
+      //вторая часть
       for (j = i; j < 2 * i; j++) arr[j] = '1' + arr[j];
     }
 
-    // print contents of arr[]
-    // for (i = 0; i < arr.length; i++) document.write(arr[i] + '<br>');
     return arr;
   }
 
@@ -192,23 +282,19 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let n = 0; n < set.length; ++n) {
         if (bufferArray[n] == 1) buf.push(set[n]);
       }
-      // console.log(buf);
+
       buf = String(buf);
+      buf = buf.split(',').join(' и ');
+      console.log(buf);
       filterArray.push(buf);
     }
     console.log(filterArray);
+    String(filterArray).split(',').join('-');
     return filterArray;
   }
 }
 {
   //алгоритм флойда
-
-  let matrix = [
-    [0, 0, 0, 0],
-    [0, 0, 1, 0],
-    [0, 1, 0, 0],
-    [0, 1, 1, 0],
-  ];
 
   function getMinFloyd(matrix) {
     console.log(matrix);
@@ -225,12 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     console.log('стоп');
   }
-  let matrix2 = [
-    [0, 8, 10, 999],
-    [8, 0, 3, 999],
-    [10, 3, 0, 5],
-    [999, 999, 5, 0],
-  ];
 
   //
   function floydWarshallAlgorithm(matrix) {
@@ -316,6 +396,7 @@ function calcCanvasStep(n) {
   stepY = canvas.height / (n * 10);
 }
 function paintPoint(x, y, n) {
+  // ❌ сделать красивые разноцветные точки - во вторую очередь
   context.beginPath();
   context.arc(x * stepX, y * stepY, stepX, 0, 2 * Math.PI, false);
   context.fillStyle = 'red';
@@ -336,6 +417,7 @@ function addTextToPoints() {
   }
 }
 function addTextToEdge(matrix) {
+  // сделать визуально красиво ❌-вторая оч
   for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < matrix.length; ++x) {
       if (matrix[x][y] == matrix[y][x]) {
