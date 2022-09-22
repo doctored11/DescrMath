@@ -1,0 +1,21 @@
+@media (max-width: 600px) {
+  .input-box {
+    flex-direction: column;
+    position: relative;
+  }
+
+  .form__input1,
+  .btn {
+    width: 50%;
+  }
+  .form__input1 {
+    margin-bottom: 0.5rem;
+  }
+  .rendmatrix-block-output {
+    flex-direction: column;
+  }
+  .cell {
+    max-width: 45px;
+    max-height: 45px;
+  }
+}

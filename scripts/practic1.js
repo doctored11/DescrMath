@@ -16,40 +16,52 @@ let stepX, stepY;
 const canvas = document.querySelector('.canvas');
 const context = canvas.getContext('2d');
 console.log(canvas);
-canvas.width = 500;
-canvas.height = 500;
-
-//
+canvas.width = 2000;
+canvas.height = canvas.width;
 
 {
   //events
   let randomMatrixBtn = document.querySelector('.ub__btn-random-generate');
   let inputN = document.querySelector('.form-control');
-  // console.log(inputN);
+
   randomMatrixBtn.addEventListener('click', () => {
-    X = Number(inputN.value);
+    X = Number(inputN.value) || 2;
+    if (X < 2) X++;
+    if (X > 16) X = 10;
     console.log(X);
     Y = X;
     let matrix = createMatrix(X, Y);
-
     fillMatrix(matrix);
     console.log(matrix);
-    tableClearVisualFull(matrix);
-    createTable(matrix);
+    tableClearVisualFull('table-rand');
+    createTable(matrix, randMatrix);
     matrixStatusCheck(matrix);
   });
 
-  //  //Dom
-  //блок со случайной матрицей
+  //блок 1 (со случайной матрицей)
   let randMatrix = document.querySelector('.table-rand');
-  function createTable(matrix) {
+  function createTable(
+    matrix,
+    activeBlock,
+    attribute = 'descr-num',
+    id = 'id',
+    mode = 'descr',
+    matrix0 = 'none'
+  ) {
     for (let j = 0; j < matrix.length; ++j) {
       let stroke = document.createElement('tr');
-      randMatrix.append(stroke);
+      activeBlock.append(stroke);
       for (let i = 0; i < matrix.length; ++i) {
+        let bufAttribute = attribute;
         let buf = document.createElement('th');
         buf.classList.add('cell');
-        buf.innerHTML = `<span class ="descr-num rand-num" id = "${j}-${i}">${matrix[j][i]}</span>`;
+        if ((matrix[j][i] == Infinity || matrix[j][i] == NaN) && mode != 'descr') {
+          matrix[j][i] = 0;
+        }
+        if (matrix0 != 'none' && matrix[j][i] != matrix0[j][i] && mode != 'descr') {
+          matrix0[j][i] == null ? (bufAttribute = 'new') : (bufAttribute = 'changed');
+        }
+        buf.innerHTML = `<span class ="${bufAttribute} rand-num" ${id} = "${j}-${i}">${matrix[j][i]}</span>`;
         stroke.append(buf);
       }
     }
@@ -60,99 +72,41 @@ canvas.height = 500;
   function matrixStatusCheck(matrix) {
     for (let i = 0; i < statusMessage.length; ++i) {
       checkDiagonal(matrix, 'main', 0)
-        ? (statusMessage[0].textContent = ' антирефлексивна')
+        ? (statusMessage[0].innerHTML = ' <span class="accent-txt">антирефлексивна<span>')
         : (statusMessage[0].textContent = 'условия антирефлексивности не выполненны');
 
       checkDiagonal(matrix, 'main', 1)
-        ? (statusMessage[1].textContent = ' рефлексивна')
+        ? (statusMessage[1].innerHTML = '<span class="accent-txt"> рефлексивна</span>')
         : (statusMessage[1].textContent = 'условия рефлексивности не выполненны');
       checkSymmetry(matrix, '')
-        ? (statusMessage[2].textContent = 'симметрична')
+        ? (statusMessage[2].innerHTML = '<span class="accent-txt">симметрична</span>')
         : (statusMessage[2].textContent = 'не симметрична');
 
-      checkSymmetry(matrix, 'anti')
-        ? (statusMessage[3].textContent = 'антисимметрична')
+      checkSymmetry(matrix, 'anti') && checkDiagonal(matrix, 'main', 0)
+        ? (statusMessage[3].innerHTML = '<span class="accent-txt">антисимметрична</span>')
         : (statusMessage[3].textContent = 'не антисимметрична');
 
       if (checkSymmetry(matrix, '') && checkDiagonal(matrix, 'main', 1)) {
         checkTransit(matrix)
-          ? (statusMessage[4].textContent = 'транзитивна')
+          ? (statusMessage[4].innerHTML = '<span class="accent-txt">транзитивна</span>')
           : (statusMessage[4].textContent = 'не транзитивна');
       } else {
         statusMessage[4].textContent = 'не транзитивна';
       }
     }
   }
-  function tableClearVisualFull() {
-    let matrix = document.querySelector('.table-rand');
+
+  function tableClearVisualFull(attribute) {
+    let matrix = document.querySelector(`.${attribute}`);
     let buf = matrix.childNodes.length;
     for (let i = 0; i < buf; ++i) {
       matrix.childNodes[0].remove();
     }
   }
+
   // блок DOM множества
-  let inputPlenty = document.querySelector('.form-plenty');
+  showPlenty();
 
-  let btnPlenty = document.querySelector('.btn-plenty');
-  btnPlenty.addEventListener('click', () => {
-    let mainPlanty = inputPlenty.value;
-    let out = document.querySelector('.plenty-output');
-
-    out.innerHTML = `|   ${String(searchSubsets(mainPlanty))
-      .split(',')
-      .join('<span class="accent0"> | </span>')}  |`;
-  });
-  // транзитивное замыкание DOM
-  let inputClose = document.querySelector('.form-close');
-  let btnClose = document.querySelector('.btn-close');
-  btnClose.addEventListener('click', () => {
-    let inputArray = document.querySelector('.input-canvas');
-    let closeN = Number(inputClose.value); //  ❌ поставить ограничения от 3 до 22 включительно( просто для красоты верхняя планка) ❌ второй очередью
-
-    for (let i = 0; i < closeN; ++i) {
-      let inputStroke = document.createElement('div');
-
-      inputArray.append(inputStroke);
-      for (let j = 0; j < closeN; ++j) {
-        let inputCell = document.createElement('input');
-        inputStroke.append(inputCell);
-        inputCell.classList.add(`cell`);
-        inputCell.classList.add(`close-cell`);
-        inputCell.classList.add(`cell-${j}-${i}`);
-      }
-    }
-    let btnsBlock = document.querySelector('.close-btns');
-    let takeBtn = document.createElement('button');
-    takeBtn.classList.add(`btn-calc`);
-    takeBtn.classList.add(`calc`);
-    takeBtn.textContent = 'рассчитать';
-    btnsBlock.append(takeBtn);
-    takeBtn.addEventListener('click', () => {
-      //написать функцию для очистки матрицы инпутов ❌ во вторую очередь
-      let matrix = createMatrix(closeN, closeN);
-      takeProperties(matrix); // 🛑сразу главную диагональ заполнить нулями (и запретить их изменять) !перваяочередь🛑
-      let startMatrix = JSON.parse(JSON.stringify(matrix));
-      calcCanvasStep(closeN);
-      matrix = floydWarshallAlgorithm(matrix); // алгоритм изменяет начальную матрицу
-      window.coordsArray = paintArrayOfPoints(matrix);
-
-      CalcExistingEdge(startMatrix);
-      addTextToPoints();
-      addTextToEdge(startMatrix);
-
-      // выводить таблицу с быстрыми путями куда нибуть (+функция) 🛑 в первую очередь
-    });
-  });
-
-  function takeProperties(matrix) {
-    let cellArray = document.querySelectorAll('.close-cell');
-    for (let i = 0; i < cellArray.length; ++i) {
-      let y = cellArray[i].classList[2].split('-')[1];
-      let x = cellArray[i].classList[2].split('-')[2];
-      matrix[x][y] = Number(cellArray[i].value);
-    }
-    console.log(matrix);
-  }
   //   Cоздание и зполнение
 
   function createMatrix(X, Y) {
@@ -171,9 +125,6 @@ canvas.height = 500;
     return matrix;
   }
 
-  function getDiscrRandom() {
-    return Math.round(Math.random());
-  }
   //   Диагонали
 
   function checkDiagonal(matrix, direction = 'main', mode) {
@@ -188,7 +139,6 @@ canvas.height = 500;
         if (X == y) {
           if (matrix[x][y] != mode) {
             buf = `есть ${reverse(mode)} на ${direction} диагонале`;
-            console.log(buf);
             return 0;
           }
         }
@@ -211,30 +161,9 @@ canvas.height = 500;
         }
       }
     }
-    //проверить удовия анти симметричность
     console.log(`${mode}симметрична относительно главной`);
     return 1;
   }
-
-  function convertToBinary(number) {
-    let num = number;
-    let binary = (num % 2).toString();
-    for (; num > 1; ) {
-      num = parseInt(num / 2);
-      binary = (num % 2) + binary;
-    }
-    return binary;
-  }
-
-  function reverse(number) {
-    number = `${number}`.split('');
-    for (let i = 0; i < number.length; ++i) {
-      number[i] == 1 ? number.splice(i, 1, '0') : number.splice(i, 1, '1');
-    }
-    return Number(number.join(''));
-  }
-
-  // !!______________________________________________________________!!
 
   function checkTransit(matrix) {
     //на вход только симметричную матрицу с единицами на главной диагонале
@@ -249,6 +178,48 @@ canvas.height = 500;
     console.log('транзитивна');
     return 1;
   }
+  // -- вспомогательные функции для модуля 1
+  function reverse(number) {
+    number = `${number}`.split('');
+    for (let i = 0; i < number.length; ++i) {
+      number[i] == 1 ? number.splice(i, 1, '0') : number.splice(i, 1, '1');
+    }
+    return Number(number.join(''));
+  }
+  function convertToBinary(number) {
+    let num = number;
+    let binary = (num % 2).toString();
+    for (; num > 1; ) {
+      num = parseInt(num / 2);
+      binary = (num % 2) + binary;
+    }
+    return binary;
+  }
+  function getDiscrRandom() {
+    return Math.round(Math.random());
+  }
+
+  // второе задание - поиск подмножеств
+  function searchSubsets(set) {
+    //на вход строку без разделителей( сплошную)
+    let graysArray = generateTableGray(set.length);
+    let filterArray = [];
+    for (let i = 0; i < graysArray.length; ++i) {
+      let bufferArray = graysArray[i].split('');
+      let buf = [];
+      for (let n = 0; n < set.length; ++n) {
+        if (bufferArray[n] == 1) buf.push(set[n]);
+      }
+
+      buf = String(buf);
+      buf = buf.split(',').join('  ');
+      console.log(buf);
+      filterArray.push(buf);
+    }
+    console.log(filterArray);
+    String(filterArray).split(',').join('-');
+    return filterArray;
+  }
 
   function generateTableGray(n) {
     if (n <= 0) return;
@@ -262,35 +233,11 @@ canvas.height = 500;
     let i, j;
     for (i = 2; i < 1 << n; i = i << 1) {
       for (j = i - 1; j >= 0; j--) arr.push(arr[j]);
-      //первая часть
       for (j = 0; j < i; j++) arr[j] = '0' + arr[j];
-
-      //вторая часть
       for (j = i; j < 2 * i; j++) arr[j] = '1' + arr[j];
     }
 
     return arr;
-  }
-
-  function searchSubsets(set) {
-    //на вход строку без разделителей( сплошную)
-    let graysArray = generateTableGray(set.length);
-    let filterArray = [];
-    for (let i = 0; i < graysArray.length; ++i) {
-      let bufferArray = graysArray[i].split('');
-      let buf = [];
-      for (let n = 0; n < set.length; ++n) {
-        if (bufferArray[n] == 1) buf.push(set[n]);
-      }
-
-      buf = String(buf);
-      buf = buf.split(',').join(' и ');
-      console.log(buf);
-      filterArray.push(buf);
-    }
-    console.log(filterArray);
-    String(filterArray).split(',').join('-');
-    return filterArray;
   }
 }
 {
@@ -314,7 +261,6 @@ canvas.height = 500;
 
   //
   function floydWarshallAlgorithm(matrix) {
-    let startMatrix = JSON.parse(JSON.stringify(matrix));
     let numberOfPoints = matrix.length;
     for (let k = 0; k < numberOfPoints; ++k) {
       for (let i = 0; i < numberOfPoints; ++i) {
@@ -325,13 +271,104 @@ canvas.height = 500;
         }
       }
     }
-    console.log(startMatrix);
-    console.log(matrix);
     return matrix;
   }
 
-  //
+  // транзитивное замыкание DOM
+
+  let inputClose = document.querySelector('.form-close');
+  let btnClose = document.querySelector('.btn-close');
+  let takeBtn = document.createElement('button');
+  btnClose.addEventListener('click', () => {
+    let inputArray = document.querySelector('.input-canvas');
+    let closeN = Number(inputClose.value) || 3;
+
+    //верхнее ограничение для красивой визуальной состовляющей
+    if (closeN < 2) closeN = 2;
+    if (closeN > 22) closeN = 22;
+
+    inputArray.innerHTML = '';
+
+    for (let i = 0; i < closeN; ++i) {
+      let inputStroke = document.createElement('div');
+      inputArray.append(inputStroke);
+      for (let j = 0; j < closeN; ++j) {
+        let inputCell = document.createElement('input');
+        inputStroke.append(inputCell);
+        inputCell.classList.add(`cell`);
+        inputCell.classList.add(`close-cell`);
+        inputCell.classList.add(`cell-${j}-${i}`);
+        if (i == j) {
+          inputCell.value = 0;
+          inputCell.readOnly = true;
+        }
+      }
+    }
+
+    let btnsBlock = document.querySelector('.close-btns');
+    takeBtn.classList.add(`btn-calc`);
+    takeBtn.classList.add(`btn`);
+    takeBtn.classList.add(`calc`);
+    takeBtn.textContent = 'рассчитать';
+    btnsBlock.append(takeBtn);
+
+    takeBtn.addEventListener('click', () => {
+      clearCanvas();
+      let matrix = createMatrix(closeN, closeN);
+      calcCanvasStep(closeN);
+      takeProperties(matrix);
+      let startMatrix = JSON.parse(JSON.stringify(matrix));
+
+      matrix = floydWarshallAlgorithm(matrix); // алгоритм изменяет начальную матрицу
+      window.coordsArray = paintArrayOfPoints(matrix);
+
+      CalcExistingEdge(startMatrix);
+      addTextToPoints();
+      addTextToEdge(startMatrix);
+
+      let matrixTabble = document.querySelector('.table-floyd');
+      tableClearVisualFull('table-floyd');
+      createTable(matrix, matrixTabble, 'floyd-cell', 'floyd', 'floyd-mode', startMatrix);
+    });
+  });
+  // -- вспомогательные функции для модуля 3
+  function takeProperties(matrix) {
+    let cellArray = document.querySelectorAll('.close-cell');
+    for (let i = 0; i < cellArray.length; ++i) {
+      let y = cellArray[i].classList[2].split('-')[1];
+      let x = cellArray[i].classList[2].split('-')[2];
+
+      matrix[x][y] = Number(cellArray[i].value) || 0;
+      if (
+        Number(cellArray[i].value) == 0 ||
+        Number(cellArray[i].value) == null ||
+        Number(cellArray[i].value) == undefined ||
+        Number(cellArray[i].value) == NaN
+      ) {
+        matrix[x][y] = Infinity;
+      }
+      if (x == y) matrix[x][y] = 0;
+    }
+    console.log(matrix);
+  }
 }
+//основная логика ↑↑↑
+//||||||||||||
+//логика визуала  ↓↓↓
+
+function showPlenty() {
+  let inputPlenty = document.querySelector('.form-plenty');
+  let btnPlenty = document.querySelector('.btn-plenty');
+  btnPlenty.addEventListener('click', () => {
+    let mainPlanty = inputPlenty.value;
+    let out = document.querySelector('.plenty-output');
+
+    out.innerHTML = `|   ${String(searchSubsets(mainPlanty))
+      .split(',')
+      .join('<span class="accent0"> | </span>')}  |`;
+  });
+}
+
 //
 //
 //  Canvas
@@ -348,7 +385,8 @@ function paintArrayOfPoints(matrix) {
   const сoordinatesOfPoints = [];
   for (let i = 0; i < n; ++i) {
     bufA = (i + 1) * stepX;
-    bufB = (n - i + 1) * stepY * getRandomArbitrary(0.2, 1) + 1;
+    bufB =
+      (n - i + 1 * getRandomArbitrary(0, 1.1)) * stepY * getRandomArbitrary(0.3, 0.8) + 1;
     let bufArray = [];
     bufArray.push(bufA, bufB);
     сoordinatesOfPoints.push(bufArray);
@@ -358,10 +396,15 @@ function paintArrayOfPoints(matrix) {
   return сoordinatesOfPoints;
 }
 
-function CalcExistingEdge(matrix) {
+function CalcExistingEdge(matrix, x) {
   for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < matrix.length; ++x) {
-      if (matrix[x][y] != null && matrix[x][y] != undefined && matrix[x][y] != Infinity) {
+      if (
+        matrix[x][y] != null &&
+        matrix[x][y] != undefined &&
+        matrix[x][y] != Infinity &&
+        matrix[x][y] != 0
+      ) {
         paintEdge(x, y);
       }
     }
@@ -389,43 +432,62 @@ function paintEdge(point1, point2) {
 }
 
 function calcCanvasStep(n) {
+  canvas.width = 2000;
   // подаем кол во точек для построения
-  n += 1;
+  n += 2;
+  let bufIndex = (10 - n) / 10;
+  if (bufIndex < 0.3) bufIndex = 0.9;
+  let buf = bufIndex * canvas.width;
+  // подумать над лучшим расчетом шага
+  let a;
 
-  stepX = canvas.width / (n * 10);
-  stepY = canvas.height / (n * 10);
+  if (n < 10) a = 0.03;
+  if (n > 9) a = 0.1;
+
+  stepX = buf / (0.1 * window.screen.width);
+
+  stepY = buf / (0.1 * window.screen.width);
+  canvas.width = canvas.width * 2;
+  canvas.height = canvas.width;
 }
 function paintPoint(x, y, n) {
-  // ❌ сделать красивые разноцветные точки - во вторую очередь
+  context.moveTo(0, 0);
   context.beginPath();
-  context.arc(x * stepX, y * stepY, stepX, 0, 2 * Math.PI, false);
+  context.arc(x * stepX, y * stepY, 2.2 * stepX, 0, 2 * Math.PI, false);
   context.fillStyle = 'red';
   context.fill();
   context.lineWidth = 1;
   context.strokeStyle = 'red';
   context.stroke();
+  //
+  context.moveTo(0, 0);
+  context.beginPath();
+  context.arc(x * stepX, y * stepY, 1.7 * stepX, 0, 2 * Math.PI, false);
+  context.fillStyle = '#fff';
+  context.fill();
+  context.lineWidth = 1;
+  context.strokeStyle = '#fff';
+  context.stroke();
 }
 function addTextToPoints() {
   console.log('!2');
   for (let i = 0; i < coordsArray.length; ++i) {
-    context.font = '30px mono';
+    context.font = '20px Arial Black'; // попробовать подключить другой
+    context.fillStyle = 'red';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-
-    context.fillStyle = 'green';
-    context.fillText(i, (coordsArray[i][0] + 2) * stepX, (coordsArray[i][1] + 2) * stepY);
+    context.fillText(i, coordsArray[i][0] * stepX, coordsArray[i][1] * stepY);
   }
 }
 function addTextToEdge(matrix) {
-  // сделать визуально красиво ❌-вторая оч
   for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < matrix.length; ++x) {
       if (matrix[x][y] == matrix[y][x]) {
         console.log(x, y, matrix[x][y], matrix[y][x]);
-        context.font = '12px mono';
-        context.fillStyle = 'red';
+        context.font = '16px Arial Black'; // попробовать подключить другой
+        context.fillStyle = '#8B00FF';
         let previous = y - 1;
-        // y == 0 ? (previous = matrix.length - 1) : (previous = y - 1);
+
         let bufA = ((coordsArray[y][0] + coordsArray[x][0]) / 2) * stepX;
 
         let bufB = ((coordsArray[y][1] + coordsArray[x][1]) / 2) * stepX - stepY;
@@ -436,7 +498,7 @@ function addTextToEdge(matrix) {
           console.log('___');
           context.fillText(bufC, bufA, bufB);
         }
-      } else {
+      } else if (matrix[x][y] != 0 && matrix[x][y] != null && matrix[x][y] != NaN) {
         let bufCenterX = ((coordsArray[y][0] + coordsArray[x][0]) / 2) * stepX; //cередина отрезка
         let bufCenterY = ((coordsArray[y][1] + coordsArray[x][1]) / 2) * stepX;
 
@@ -444,19 +506,19 @@ function addTextToEdge(matrix) {
         let y0 = (bufCenterY + coordsArray[y][1] * stepY) / 2;
         let x1 = (bufCenterX + coordsArray[x][0] * stepX) / 2;
         let y1 = (bufCenterY + coordsArray[x][1] * stepY) / 2;
-
-        canvas_arrow(context, x1, y1, x0, y0, 10, matrix[x][y]);
+        let color = `	rgb(${getRandomArbitrary(35, 255)},${getRandomArbitrary(
+          15,
+          40
+        )},${getRandomArbitrary(25, 250)})`;
+        console.log(color);
+        canvas_arrow(context, x1, y1, x0, y0, 10, matrix[x][y], color);
         //
-
-        // let bufC = matrix[x][y];
       }
-
-      //хочу по середине отрисовать стрелки в разные строны разных цветов и расстояние писать разными цветами)
     }
   }
 }
 
-// /
+//
 function canvas_arrow(context, fromx, fromy, tox, toy, r, content, color = 'green') {
   let x_center = tox;
   let y_center = toy;
@@ -484,14 +546,12 @@ function canvas_arrow(context, fromx, fromy, tox, toy, r, content, color = 'gree
   y = r * Math.sin(angle) + y_center;
 
   context.lineTo(x, y);
-
   context.closePath();
   context.fillStyle = color;
 
   context.fill();
-  //
-  context.font = '18px mono';
-  context.fillStyle = 'black';
+  context.font = '18px Arial Black';
+  context.fillStyle = color;
 
   context.fillText(content, x + stepX, y - 1.2 * stepY);
 }
