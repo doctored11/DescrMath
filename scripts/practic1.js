@@ -16,7 +16,7 @@ let stepX, stepY;
 const canvas = document.querySelector('.canvas');
 const context = canvas.getContext('2d');
 console.log(canvas);
-canvas.width = 2000;
+canvas.width = window.screen.width * 0.7;
 canvas.height = canvas.width;
 
 {
@@ -70,29 +70,29 @@ canvas.height = canvas.width;
   // функции dom матрица
   let statusMessage = document.querySelectorAll('.status');
   function matrixStatusCheck(matrix) {
-    for (let i = 0; i < statusMessage.length; ++i) {
-      checkDiagonal(matrix, 'main', 0)
-        ? (statusMessage[0].innerHTML = ' <span class="accent-txt">антирефлексивна<span>')
-        : (statusMessage[0].textContent = 'условия антирефлексивности не выполненны');
+    checkDiagonal(matrix, 'main', 0)
+      ? (statusMessage[0].innerHTML = ' <span class="accent-txt">антирефлексивна<span>')
+      : (statusMessage[0].textContent = 'условия антирефлексивности не выполненны');
 
-      checkDiagonal(matrix, 'main', 1)
-        ? (statusMessage[1].innerHTML = '<span class="accent-txt"> рефлексивна</span>')
-        : (statusMessage[1].textContent = 'условия рефлексивности не выполненны');
-      checkSymmetry(matrix, '')
-        ? (statusMessage[2].innerHTML = '<span class="accent-txt">симметрична</span>')
-        : (statusMessage[2].textContent = 'не симметрична');
+    checkDiagonal(matrix, 'main', 1)
+      ? (statusMessage[1].innerHTML = '<span class="accent-txt"> рефлексивна</span>')
+      : (statusMessage[1].textContent = 'условия рефлексивности не выполненны');
+    checkSymmetry(matrix, '')
+      ? (statusMessage[2].innerHTML = '<span class="accent-txt">симметрична</span>')
+      : (statusMessage[2].textContent = 'не симметрична');
+    checkSymmetry(matrix, 'anti')
+      ? (statusMessage[3].innerHTML = '<span class="accent-txt">антисимметрична</span>')
+      : (statusMessage[3].textContent = 'не антисимметрична');
+    checkSymmetry(matrix, 'a') && checkDiagonal(matrix, 'main', 0)
+      ? (statusMessage[4].innerHTML = '<span class="accent-txt">асимметрична</span>')
+      : (statusMessage[4].textContent = 'не асимметрична');
 
-      checkSymmetry(matrix, 'anti') && checkDiagonal(matrix, 'main', 0)
-        ? (statusMessage[3].innerHTML = '<span class="accent-txt">антисимметрична</span>')
-        : (statusMessage[3].textContent = 'не антисимметрична');
-
-      if (checkSymmetry(matrix, '') && checkDiagonal(matrix, 'main', 1)) {
-        checkTransit(matrix)
-          ? (statusMessage[4].innerHTML = '<span class="accent-txt">транзитивна</span>')
-          : (statusMessage[4].textContent = 'не транзитивна');
-      } else {
-        statusMessage[4].textContent = 'не транзитивна';
-      }
+    if (checkSymmetry(matrix, '') && checkDiagonal(matrix, 'main', 1)) {
+      checkTransit(matrix)
+        ? (statusMessage[5].innerHTML = '<span class="accent-txt">транзитивна</span>')
+        : (statusMessage[5].textContent = 'не транзитивна');
+    } else {
+      statusMessage[5].textContent = 'не транзитивна';
     }
   }
 
@@ -149,14 +149,23 @@ canvas.height = canvas.width;
     return 1;
   }
 
-  function checkSymmetry(matrix, mode) {
+  function checkSymmetry(matrix, mode = '0') {
     let buf;
 
     for (let y = 0; y < matrix.length; ++y) {
       for (let x = 0; x < matrix[0].length; ++x) {
-        mode == 'anti' && x != y ? (buf = reverse(matrix[y][x])) : (buf = matrix[y][x]);
+        mode === 'anti' && x != y && matrix[x][y] != 0
+          ? (buf = reverse(matrix[y][x]))
+          : (buf = matrix[y][x]);
+
+        if (mode === 'a' && x != y) {
+          buf = reverse(matrix[y][x]);
+        } else if (mode == '0') {
+          buf = matrix[y][x];
+        }
+
         if (matrix[x][y] != buf) {
-          console.log(`не симметрична относительно главной`);
+          console.log('не симметрична относительно главной');
           return 0;
         }
       }
@@ -286,6 +295,9 @@ canvas.height = canvas.width;
     //верхнее ограничение для красивой визуальной состовляющей
     if (closeN < 2) closeN = 2;
     if (closeN > 22) closeN = 22;
+    if (screen.width < 880) {
+      if (closeN > 15) closeN = 12;
+    }
 
     inputArray.innerHTML = '';
 
@@ -385,8 +397,10 @@ function paintArrayOfPoints(matrix) {
   const сoordinatesOfPoints = [];
   for (let i = 0; i < n; ++i) {
     bufA = (i + 1) * stepX;
-    bufB =
-      (n - i + 1 * getRandomArbitrary(0, 1.1)) * stepY * getRandomArbitrary(0.3, 0.8) + 1;
+    i < n / 2
+      ? (bufB = (n - i) * getRandomArbitrary(0.4, 1.1) * stepY)
+      : (bufB = (i * getRandomArbitrary(0.3, 0.8) + n / i) * stepY);
+
     let bufArray = [];
     bufArray.push(bufA, bufB);
     сoordinatesOfPoints.push(bufArray);
@@ -420,11 +434,11 @@ function paintEdge(point1, point2) {
 
   //
   context.beginPath();
-  context.moveTo(x1 * stepY, y1 * stepY);
-  context.lineTo(x2 * stepY, y2 * stepY);
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
 
-  context.strokeStyle = 'blue';
-  context.lineWidth = 1;
+  context.strokeStyle = `#3b1e92`;
+  context.lineWidth = 2;
   context.lineCap = 'round';
   context.lineJoin = 'bevel';
 
@@ -432,51 +446,68 @@ function paintEdge(point1, point2) {
 }
 
 function calcCanvasStep(n) {
-  canvas.width = 2000;
+  // canvas.width = 2000;
   // подаем кол во точек для построения
-  n += 2;
-  let bufIndex = (10 - n) / 10;
-  if (bufIndex < 0.3) bufIndex = 0.9;
-  let buf = bufIndex * canvas.width;
+  n += 1;
+
   // подумать над лучшим расчетом шага
-  let a;
 
   if (n < 10) a = 0.03;
   if (n > 9) a = 0.1;
 
-  stepX = buf / (0.1 * window.screen.width);
+  stepX = (0.7 * window.screen.width) / n;
 
-  stepY = buf / (0.1 * window.screen.width);
-  canvas.width = canvas.width * 2;
+  stepY = stepX;
+  canvas.width = n * stepX;
   canvas.height = canvas.width;
+  console.log(window.screen.width, stepX, n, canvas.width);
 }
 function paintPoint(x, y, n) {
+  console.log(window.screen.width, stepX, n, canvas.width);
+
+  let rad = 0.2;
+  if (window.screen.width < 550) rad = 0.35;
+
   context.moveTo(0, 0);
   context.beginPath();
-  context.arc(x * stepX, y * stepY, 2.2 * stepX, 0, 2 * Math.PI, false);
+  context.arc(x, y, rad * stepX, 0, 2 * Math.PI, false);
   context.fillStyle = 'red';
   context.fill();
   context.lineWidth = 1;
   context.strokeStyle = 'red';
   context.stroke();
   //
-  context.moveTo(0, 0);
-  context.beginPath();
-  context.arc(x * stepX, y * stepY, 1.7 * stepX, 0, 2 * Math.PI, false);
-  context.fillStyle = '#fff';
-  context.fill();
-  context.lineWidth = 1;
-  context.strokeStyle = '#fff';
-  context.stroke();
+  // context.moveTo(0, 0);
+  // context.beginPath();
+  // context.arc(x, y, 0.1 * stepX, 0, 2 * Math.PI, false);
+  // context.fillStyle = '#fff';
+  // context.fill();
+  // context.lineWidth = 1;
+  // context.strokeStyle = '#fff';
+  // context.stroke();
 }
 function addTextToPoints() {
   console.log('!2');
+  let rad = 0.1;
+  if (window.screen.width < 550) rad = 0.3;
   for (let i = 0; i < coordsArray.length; ++i) {
-    context.font = '20px Arial Black'; // попробовать подключить другой
+    context.moveTo(0, 0);
+    context.beginPath();
+    context.arc(coordsArray[i][0], coordsArray[i][1], rad * stepX, 0, 2 * Math.PI, false);
+    context.fillStyle = '#fff';
+    context.fill();
+    context.lineWidth = 1;
+    context.strokeStyle = '#fff';
+    context.stroke();
+    let fontSize = stepX / 10;
+    if (window.screen.width < 550) fontSize = stepX / 2;
+
+    context.font = `${fontSize}px Arial Black`; // попробовать подключить другой
     context.fillStyle = 'red';
+    context.background = `#fff`;
     context.textAlign = 'center';
     context.textBaseline = 'middle';
-    context.fillText(i, coordsArray[i][0] * stepX, coordsArray[i][1] * stepY);
+    context.fillText(i, coordsArray[i][0], coordsArray[i][1]);
   }
 }
 function addTextToEdge(matrix) {
@@ -484,13 +515,16 @@ function addTextToEdge(matrix) {
     for (let x = 0; x < matrix.length; ++x) {
       if (matrix[x][y] == matrix[y][x]) {
         console.log(x, y, matrix[x][y], matrix[y][x]);
-        context.font = '16px Arial Black'; // попробовать подключить другой
+        let fontSize = stepX / 15;
+        if (window.screen.width < 550) fontSize = stepX / 4;
+
+        context.font = `${fontSize}px Arial Black`; // попробовать подключить другой
         context.fillStyle = '#8B00FF';
         let previous = y - 1;
 
-        let bufA = ((coordsArray[y][0] + coordsArray[x][0]) / 2) * stepX;
+        let bufA = (coordsArray[y][0] + coordsArray[x][0]) / 2;
 
-        let bufB = ((coordsArray[y][1] + coordsArray[x][1]) / 2) * stepX - stepY;
+        let bufB = (coordsArray[y][1] + coordsArray[x][1]) / 2; //
         if (matrix[x][y] != null && x != y) {
           console.log('!!!');
           let bufC = matrix[x][y];
@@ -499,19 +533,22 @@ function addTextToEdge(matrix) {
           context.fillText(bufC, bufA, bufB);
         }
       } else if (matrix[x][y] != 0 && matrix[x][y] != null && matrix[x][y] != NaN) {
-        let bufCenterX = ((coordsArray[y][0] + coordsArray[x][0]) / 2) * stepX; //cередина отрезка
-        let bufCenterY = ((coordsArray[y][1] + coordsArray[x][1]) / 2) * stepX;
+        let bufCenterX = (coordsArray[y][0] + coordsArray[x][0]) / 2 - 0.4; //cередина отрезка
+        let bufCenterY = (coordsArray[y][1] + coordsArray[x][1]) / 2;
 
-        let x0 = (bufCenterX + coordsArray[y][0] * stepX) / 2;
-        let y0 = (bufCenterY + coordsArray[y][1] * stepY) / 2;
-        let x1 = (bufCenterX + coordsArray[x][0] * stepX) / 2;
-        let y1 = (bufCenterY + coordsArray[x][1] * stepY) / 2;
+        let x0 = (bufCenterX + coordsArray[y][0]) / 2;
+        let y0 = (bufCenterY + coordsArray[y][1]) / 2;
+        let x1 = (bufCenterX + coordsArray[x][0]) / 2;
+        let y1 = (bufCenterY + coordsArray[x][1]) / 2;
         let color = `	rgb(${getRandomArbitrary(35, 255)},${getRandomArbitrary(
           15,
           40
         )},${getRandomArbitrary(25, 250)})`;
         console.log(color);
-        canvas_arrow(context, x1, y1, x0, y0, 10, matrix[x][y], color);
+
+        let r = stepX / 20;
+        if (window.screen.width < 550) r = stepX / 6;
+        canvas_arrow(context, x1, y1, x0, y0, r, matrix[x][y], color);
         //
       }
     }
@@ -550,12 +587,51 @@ function canvas_arrow(context, fromx, fromy, tox, toy, r, content, color = 'gree
   context.fillStyle = color;
 
   context.fill();
-  context.font = '18px Arial Black';
+  let fontSize = stepX / 8;
+  if (window.screen.width < 550) fontSize = stepX / 3;
+  context.font = `${fontSize}px Arial Black`;
+
   context.fillStyle = color;
 
-  context.fillText(content, x + stepX, y - 1.2 * stepY);
+  context.fillText(content, x, y * 0.95);
 }
 //
 function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
+}
+//ani
+let a = 1;
+let b = 1;
+let time = 820;
+setInterval(function () {
+  a > 5 ? (a = 1) : a++;
+  b++;
+  aniTxt(a);
+}, time);
+
+function aniTxt(a) {
+  let txtPole = document.querySelector('.txt-paint');
+  let buf;
+
+  switch (a) {
+    case 1:
+      buf = '¯_(ツ)_/¯';
+      break;
+    case 2:
+      buf = '(ಥ﹏ಥ)';
+      break;
+    case 3:
+      buf = '◘_◘';
+      break;
+    case 4:
+      buf = '⊙﹏⊙';
+      break;
+    case 5:
+      buf = '^ↀᴥↀ^';
+      break;
+    case 6:
+      buf = '¯_(⊙_ʖ⊙)_/¯';
+      break;
+  }
+  txtPole.innerHTML = buf;
 }

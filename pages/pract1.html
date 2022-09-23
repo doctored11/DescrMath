@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="https://unpkg.com/simplebar@latest/dist/simplebar.css" />
+
     <link rel="stylesheet" href="../css/style.css" />
 
     <link rel="stylesheet" href="../css/media.css" />
@@ -13,34 +13,64 @@
     <script defer src="../scripts/practic1.js"></script>
   </head>
   <body>
-    <header class="header"><h2 class="logo">Дескретная математика</h2></header>
+    <header class="header">
+      <h2 class="logo">
+        <span class="shadow-flick flicker">#</span> Дискретная математика
+      </h2>
+      <div class="txt-paint"></div>
+    </header>
+    <!-- <section class="task-section">
+      <div class="frame">
+      <div class="txt-paint">
+
+      </div>
+      
+    </section> -->
 
     <section class="task-section">
       <div class="frame">
         <p class="simple-txt">
-          В&nbsp;первом задание случайная дискретная матрица проверяется
-          на&nbsp;рефлексивность, антирефлексивность, симметричность, антисимметричность
-          и&nbsp;транзитивность.
+          В&nbsp;первом задание случайная дискретная матрица проверяется на&nbsp;<span
+            class="simple-decoration"
+            >рефлексивность</span
+          >, <span class="simple-decoration">антирефлексивность</span>,
+          <span class="simple-decoration">симметричность</span>,
+          <span class="simple-decoration">антисимметричность</span>
+          и&nbsp;<span class="simple-decoration">транзитивность</span>.
         </p>
         <p class="simple-txt">
-          Что&nbsp;бы узнать рефлексивна&nbsp;ли матрица, алгоритм проверяет
-          ее&nbsp;главную диагональ на&nbsp;наличие единиц, если на&nbsp;главной диагонали
-          нет нулей, то&nbsp;матрица рефлексивна.<br />
-          Чтобы проверить матрицу на антирефлексивность, нужно проверить главную диагональ
-          на отсутствие единиц.
+          Что&nbsp;бы узнать <span class="simple-decoration">рефлексивна</span>&nbsp;ли
+          матрица, алгоритм проверяет ее&nbsp;<span class="semantic"
+            >главную диагональ</span
+          >
+          на&nbsp;<span class="semantic">наличие единиц</span>, если на&nbsp;<span
+            class="semantic"
+            >главной диагонали нет нулей</span
+          >, то&nbsp;матрица <span class="simple-decoration">рефлексивна</span>.<br />
+          Чтобы проверить матрицу на
+          <span class="simple-decoration">антирефлексивность</span>, нужно проверить
+          <span class="semantic">главную диагональ на отсутствие единиц</span>.
         </p>
         <p class="simple-txt">
-          Чтобы сказать что квадратная матрица симметрична, нужно проверить
-          ее&nbsp;симметричные эллементы относительно главной диагонали на&nbsp;равенство
+          Чтобы сказать что квадратная матрица
+          <span class="simple-decoration">симметрична</span>, нужно проверить
+          ее&nbsp;<span class="semantic">симметричные элементы</span> относительно главной
+          диагонали <span class="semantic">на&nbsp;равенство</span>
         </p>
         <p class="simple-txt">
-          Для проверки на&nbsp;антисимметричность единичной квадратной матрицы нужно
-          проверить ее&nbsp;симметричные эллементы на&nbsp;неравенство, а&nbsp;так&nbsp;же
-          должна быть антирефлексивна
+          Для проверки на&nbsp;
+          <span class="simple-decoration">антисимметричность</span> единичной квадратной
+          матрицы нужно проверить каждую ячейку
+          <span class="semantic">симметричную ячейке</span> со значением<span
+            class="simple-decoration"
+          >
+            "1"</span
+          >
+          на <span class="semantic">равенство с нулем.</span>
         </p>
         <p class="simple-txt">
-          Для проверки квадратной единичной матрицы на&nbsp;транзитивность, нужно
-          постараться...
+          Для проверки квадратной единичной матрицы на&nbsp;
+          <span class="simple-decoration">транзитивность</span>, нужно постараться...
         </p>
         <!-- <div class="filters__settings d-none"></div> -->
       </div>
@@ -66,7 +96,7 @@
             </div>
           </form>
 
-          <button class="ub__btn-random-generate btn-gen btn">gen</button>
+          <button class="ub__btn-random-generate btn-gen btn">Сгенерировать</button>
         </div>
         <div class="rendmatrix-block-output out-box">
           <table class="table-rand">
@@ -77,11 +107,12 @@
             </tr>
           </table>
           <div class="staus-box">
-            <p class="message status">1</p>
-            <p class="message status">1</p>
-            <p class="message status">2</p>
-            <p class="message status">2</p>
-            <p class="message status">2</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
           </div>
         </div>
       </div>
@@ -90,12 +121,18 @@
       <div class="frame">
         <div class="content-box">
           <p class="simple-txt">
-            Для нахождения всех подмножеств множества с&nbsp;помощью алгоритма Грея, нужно
-            построить последовательность всех 2&circ;n n-битных кодов, в&nbsp;которой
-            любые два соседних кода различаются ровно в&nbsp;одном разряде. Затем
-            сопоставить построчно единицы из&nbsp;последовательности Грея с&nbsp;символами
-            исходного множества. Символы наложенные на&nbsp;единицы образуют искомые
-            подмножества
+            Для нахождения всех
+            <span class="simple-decoration">подмножеств</span> множества с&nbsp;помощью
+            алгоритма Грея, нужно
+            <span class="semantic">построить последовательность</span> всех 2&circ;n
+            n-битных кодов, в&nbsp;которой любые два соседних кода различаются ровно
+            в&nbsp;одном разряде. Затем
+            <span class="semantic">сопоставить построчно единицы</span>
+            из&nbsp;последовательности Грея
+            <span class="semantic"
+              >с&nbsp;символами исходного множества. Символы наложенные на&nbsp;единицы
+              образуют искомые подмножества</span
+            >
           </p>
         </div>
         <div class="input-box">
@@ -117,35 +154,49 @@
             </div>
           </form>
 
-          <button class="btn-plenty btn">plent</button>
+          <button class="btn-plenty btn">Найти</button>
         </div>
-        <div class="plenty-output">1</div>
+        <div class="plenty-output">____ .</div>
       </div>
     </section>
     <section class="closure task-section">
       <div class="frame">
         <div class="content-box">
           <p class="simple-txt">
-            алгоритм Флойда Уоршелла&nbsp;&mdash; это алгоритм поиска кратчайших путей
+            Алгоритм Флойда Уоршелла&nbsp;&mdash; это алгоритм поиска
+            <span class="simple-decoration">кратчайших путей</span>
             во&nbsp;взвешенном графе с&nbsp;положительным или отрицательным весом ребер
             (но&nbsp;без отрицательных циклов). За&nbsp;одно выполнение алгоритма будут
-            найдены длины (суммарные веса) кратчайших путей между всеми парами вершин.
-            Единственная ситуация с&nbsp;которой не&nbsp;справляется алгоритм&nbsp;&mdash;
-            отрицательные петли. Отрицательная петля&nbsp;&mdash; круг который можно
-            проходить бесконечно уменьшая путь с&nbsp;каждым его прохождением.
+            найдены
+            <span class="simple-decoration">длины (суммарные веса) кратчайших путей</span>
+            между всеми парами вершин. Единственная ситуация с&nbsp;которой
+            не&nbsp;справляется алгоритм&nbsp;&mdash;
+            <span class="simple-decoration">отрицательные петли</span>.
+            <span class="simple-decoration">Отрицательная петля</span>&nbsp;&mdash; круг
+            который можно проходить бесконечно уменьшая путь с&nbsp;каждым его
+            прохождением.
           </p>
           <p class="simple-txt">
-            Вес ребра может быть любым, ноль или пустая ячейка обозначают отстутствие
-            пути. В&nbsp;сгенерированной таблице розовым цветом помечаются кратчайшие
-            не&nbsp;прямые пути найденные по&nbsp;алгоритму Флойда Уоршелла, синим цветом
-            те&nbsp;пути, которые оказались короче прямых путей и&nbsp;были перезаписаны
-            в&nbsp;заполненые пользователем ячейки
+            <span class="simple-decoration">Вес ребра</span> может быть любым,
+            <span class="semantic">ноль или пустая ячейка</span> обозначают
+            <span class="semantic">отсутствие пути</span>. В&nbsp;сгенерированной таблице
+            розовым цветом помечаются
+            <span class="simple-decoration">кратчайшие непрямые пути</span>
+            найденные по&nbsp;алгоритму Флойда Уоршелла, синим цветом те&nbsp;
+            <span class="simple-decoration"
+              >пути, которые оказались короче прямых путей</span
+            >
+            и&nbsp;были перезаписаны в&nbsp;заполненные пользователем ячейки
           </p>
           <p class="simple-txt">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias, at et
-            accusamus mollitia voluptate quos, facere, dolorum nulla similique aliquid
-            debitis libero explicabo tempora! Laudantium aspernatur numquam itaque quos
-            minus!
+            <span class="semantic">Введите желаемую размерность </span>таблицы
+            и&nbsp;<span class="semantic"
+              >нажмите&nbsp;&mdash; &laquo;построить&raquo;</span
+            >, заполните пустые ячейки любыми целочисленными значениями, обратите внимание
+            что нули и&nbsp;пустые ячейки будут обозначать отсутствие пути. После
+            заполнения матрицы
+            <span class="semantic">нажмите&nbsp;&mdash; &laquo;рассчитать&raquo;</span>,
+            для нахождения минимальных путей по&nbsp;алгоритму Флойда Уоршелла
           </p>
         </div>
 
@@ -183,21 +234,15 @@
             </table>
           </div>
         </div>
-        <div class="close-btns"><button class="btn-close btn">create</button></div>
+        <div class="close-btns"><button class="btn-close btn">Построить</button></div>
       </div>
       <!-- </div> -->
     </section>
-    <section class="task-section">
-      <div class="main__scroll" data-simplebar>
-        <canvas class="canvas"></canvas>
-      </div>
-    </section>
-    <section class="task-section">
-      <div class="frame"></div>
+    <section class="task-section canvas-section">
+      <canvas class="canvas"></canvas>
     </section>
 
     <footer></footer>
     <script></script>
-    <script src="https://unpkg.com/simplebar@latest/dist/simplebar.min.js"></script>
   </body>
 </html>
