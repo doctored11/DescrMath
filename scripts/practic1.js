@@ -306,6 +306,7 @@ canvas.height = canvas.width;
       inputArray.append(inputStroke);
       for (let j = 0; j < closeN; ++j) {
         let inputCell = document.createElement('input');
+        inputCell.setAttribute('type', 'number');
         inputStroke.append(inputCell);
         inputCell.classList.add(`cell`);
         inputCell.classList.add(`close-cell`);
@@ -347,8 +348,8 @@ canvas.height = canvas.width;
   function takeProperties(matrix) {
     let cellArray = document.querySelectorAll('.close-cell');
     for (let i = 0; i < cellArray.length; ++i) {
-      let y = cellArray[i].classList[2].split('-')[1];
-      let x = cellArray[i].classList[2].split('-')[2];
+      let y = Number(cellArray[i].classList[2].split('-')[1]);
+      let x = Number(cellArray[i].classList[2].split('-')[2]);
 
       matrix[x][y] = Number(cellArray[i].value) || 0;
       if (
@@ -600,38 +601,38 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 }
 //ani
-let a = 1;
-let b = 1;
+let at = 1;
+let bt = 1;
 let time = 820;
 setInterval(function () {
-  a > 5 ? (a = 1) : a++;
-  b++;
-  aniTxt(a);
+  at > 5 ? (at = 1) : at++;
+  bt++;
+  aniTxt(at);
 }, time);
 
 function aniTxt(a) {
   let txtPole = document.querySelector('.txt-paint');
-  let buf;
+  let bufTxt;
 
   switch (a) {
     case 1:
-      buf = '¯_(ツ)_/¯';
+      bufTxt = '¯_(ツ)_/¯';
       break;
     case 2:
-      buf = '(ಥ﹏ಥ)';
+      bufTxt = '(ಥ﹏ಥ)';
       break;
     case 3:
-      buf = '◘_◘';
+      bufTxt = '◘_◘';
       break;
     case 4:
-      buf = '⊙﹏⊙';
+      bufTxt = '⊙﹏⊙';
       break;
     case 5:
-      buf = '^ↀᴥↀ^';
+      bufTxt = '^ↀᴥↀ^';
       break;
     case 6:
-      buf = '¯_(⊙_ʖ⊙)_/¯';
+      bufTxt = '¯_(⊙_ʖ⊙)_/¯';
       break;
   }
-  txtPole.innerHTML = buf;
+  txtPole.innerHTML = bufTxt;
 }

@@ -190,9 +190,19 @@ tr {
 .btn:hover {
   top: 5px;
   transition: 0.5s;
-  color: #10ff58;
-  border: #10ff58 1px solid;
+  /* background-color: #10ff58; */
+  box-shadow: 0 0 0 5px #74747413;
+  text-shadow: 0 0 10px #74747413;
+  color: var(--main-accent-color);
+  /* border: #10ff58 1px solid; */
+  /* text-decoration: underline #10ff58; */
   border-radius: 30px;
+  overflow: visible;
+}
+.randmatrix-block__user-block {
+  overflow: visible;
+  padding-top: -5px !important;
+  margin-top: 5px;
 }
 .btn:active {
   color: var(--main-text-color);
@@ -246,13 +256,14 @@ tr {
   border-radius: var(--main-border-rad-min);
 }
 .simple-decoration {
-  text-decoration: underline dotted;
+  text-decoration: none;
   color: var(--main-simple-accent-color);
   background-color: #74747413;
   padding: 1px 3px;
   border-radius: var(--main-border-rad-min);
 }
 .semantic {
-  text-decoration: underline dashed;
+  /* text-decoration: underline dashed; */
+  font-style: italic;
   text-decoration-color: var(--main-text-light-color);
 }
