@@ -72,6 +72,16 @@
           Для проверки квадратной единичной матрицы на&nbsp;
           <span class="simple-decoration">транзитивность</span>, нужно постараться...
         </p>
+        <p class="simple-txt">
+          Для проверки матрицы на&nbsp;вышеперечисленные свойства,
+          <span class="semantic">введите размерность</span>
+          матрицы в&nbsp;соответствующее поле и&nbsp;<span class="semantic"
+            >нажмите сгенирировать</span
+          >. Обратите внимание что вы&nbsp;можете подправить значения ячеек на&nbsp;нужные
+          и&nbsp;нажать&nbsp;&mdash; &rsquo;проверить&rsquo;, для проверки новой матрицы.
+          Если ваше значение будет отличным от&nbsp;1&nbsp;и&nbsp;0, оно будет заменено
+          на&nbsp;ноль!
+        </p>
         <!-- <div class="filters__settings d-none"></div> -->
       </div>
     </section>
@@ -79,9 +89,10 @@
       <div class="frame">
         <div class="randmatrix-block__user-block ub input-box">
           <form
-            action="#"
+            action="javascript:funRM();"
             id="filter-form"
             autocomplete="off"
+            method="post"
             class="contact-form__form form-add form-n"
           >
             <div class="form__input-box form__n">
@@ -95,17 +106,21 @@
               />
             </div>
           </form>
-
-          <button class="ub__btn-random-generate btn-gen btn">Сгенерировать</button>
+          <button type="button" class="ub__btn-random-generate btn-gen btn">
+            Сгенерировать
+          </button>
         </div>
         <div class="rendmatrix-block-output out-box">
-          <table class="table-rand">
-            <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </table>
+          <div class="">
+            <table class="table-rand">
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </table>
+            <button class="check-descr-matrix">проверить</button>
+          </div>
           <div class="staus-box">
             <p class="message status">.</p>
             <p class="message status">.</p>
@@ -137,9 +152,10 @@
         </div>
         <div class="input-box">
           <form
-            action="#"
+            action="javascript:funPlent();"
             id="filter-form"
             autocomplete="off"
+            method="post"
             class="contact-form__form form-add"
           >
             <div class="form__input-box form__plenty">
@@ -202,29 +218,34 @@
         </div>
 
         <div class="close-input-box">
-          <form
-            action="#"
-            id="filter-form"
-            autocomplete="off"
-            class="contact-form__form form-add"
-          >
-            <div class="form__input-box form__close">
-              <input
-                type="number"
-                class="form__input1 form-close"
-                placeholder="размерность матрицы"
-                autocomplete="off"
-                name="plenty"
-                id="plenty"
-              />
+          <div class="input-box">
+            <form
+              action="javascript:funCan();"
+              id="filter-form"
+              autocomplete="off"
+              class="contact-form__form form-add"
+            >
+              <div class="form__input-box form__close">
+                <input
+                  type="number"
+                  class="form__input1 form-close"
+                  placeholder="размерность матрицы"
+                  autocomplete="off"
+                  name="plenty"
+                  id="plenty"
+                />
+              </div>
+            </form>
+            <div class="close-start-box">
+              <button class="btn-close btn">Построить</button>
             </div>
-          </form>
-
+          </div>
           <div class="active-zone">
             <form action="#" id="input-canvas" autocomplete="off" class="input-canvas">
               <div class=""></div>
             </form>
           </div>
+          <p class="attention"></p>
           <div class="center-box">
             <table class="table-floyd">
               <tr>
@@ -235,7 +256,7 @@
             </table>
           </div>
         </div>
-        <div class="close-btns"><button class="btn-close btn">Построить</button></div>
+        <div class="close-btns"></div>
       </div>
       <!-- </div> -->
     </section>

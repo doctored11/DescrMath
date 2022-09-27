@@ -87,14 +87,18 @@ tr {
   font-family: 'MontserratR';
   overflow: hidden;
   text-align: center;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 .descr-num {
   font-size: 1.5em;
   font-family: 'Samson';
   overflow: hidden;
   text-align: center;
-  width: 25px;
-  height: 25px;
+
   display: block;
   margin: 0 auto;
 }
@@ -105,6 +109,7 @@ tr {
   height: 2rem;
   margin: 0;
   padding: 0;
+  position: relative;
   background-color: var(--main-back-color);
   border-radius: var(--main-border-rad-min);
   border: 1px solid var(--main-accent-color);
@@ -117,7 +122,15 @@ tr {
 }
 .form__close,
 .center-box {
-  margin-bottom: 2rem;
+  width: 100%;
+}
+.input-box {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+.input-box * {
+  width: 100%;
 }
 
 .input-canvas div {
@@ -210,6 +223,7 @@ tr {
   transition: 0.07s;
   background-color: #fff;
 }
+
 .close-btns {
   width: 30%;
 }
@@ -220,6 +234,8 @@ tr {
   border: var(--main-text-light-color) 1px solid;
   color: var(--main-text-color);
   transition: all cubic-bezier(0.23, 1, 0.32, 1) 0.2s;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 .form__input1:active,
 .form__input1:hover {
@@ -266,4 +282,10 @@ tr {
   /* text-decoration: underline dashed; */
   font-style: italic;
   text-decoration-color: var(--main-text-light-color);
+}
+.attention {
+  display: block;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 1rem;
 }

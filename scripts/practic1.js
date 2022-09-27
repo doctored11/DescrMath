@@ -20,21 +20,42 @@ canvas.width = window.screen.width * 0.7;
 canvas.height = canvas.width;
 
 {
+  let Xmatrix = [
+    [1, 0, 0],
+    [0, 1, 1],
+    [0, 1, 1],
+  ];
+  checkTransit(Xmatrix);
+
   //events
   let randomMatrixBtn = document.querySelector('.ub__btn-random-generate');
+
   let inputN = document.querySelector('.form-control');
 
-  randomMatrixBtn.addEventListener('click', () => {
+  randomMatrixBtn.addEventListener(
+    'click',
+    (funRM = () => {
+      X = Number(inputN.value) || 2;
+      console.log(X);
+      Y = X;
+
+      let matrix = createMatrix(X, Y);
+      fillMatrix(matrix);
+      console.log(matrix);
+      tableClearVisualFull('table-rand');
+      createTable(matrix, randMatrix);
+      matrixStatusCheck(matrix);
+    })
+  );
+
+  let btnCheck = document.querySelector('.check-descr-matrix');
+  btnCheck.addEventListener('click', () => {
     X = Number(inputN.value) || 2;
     if (X < 2) X++;
     if (X > 16) X = 10;
-    console.log(X);
-    Y = X;
-    let matrix = createMatrix(X, Y);
-    fillMatrix(matrix);
+    let matrix = createMatrix(X, X);
+    matrix = takeProperties(matrix, (mod = 'descr'));
     console.log(matrix);
-    tableClearVisualFull('table-rand');
-    createTable(matrix, randMatrix);
     matrixStatusCheck(matrix);
   });
 
@@ -61,7 +82,18 @@ canvas.height = canvas.width;
         if (matrix0 != 'none' && matrix[j][i] != matrix0[j][i] && mode != 'descr') {
           matrix0[j][i] == null ? (bufAttribute = 'new') : (bufAttribute = 'changed');
         }
-        buf.innerHTML = `<span class ="${bufAttribute} rand-num" ${id} = "${j}-${i}">${matrix[j][i]}</span>`;
+        // buf.innerHTML = `<input class ="${bufAttribute} rand-num" ${id} = "${j}-${i}">${matrix[j][i]}</input>`;
+        let bufInput = document.createElement('input');
+        bufInput.classList.add(
+          `cell-input`,
+
+          `${bufAttribute}`,
+          `${id}-${j}-${i}`,
+          `rand-num`
+        );
+        bufInput.value = matrix[j][i];
+        buf.append(bufInput);
+
         stroke.append(buf);
       }
     }
@@ -288,19 +320,94 @@ canvas.height = canvas.width;
   let inputClose = document.querySelector('.form-close');
   let btnClose = document.querySelector('.btn-close');
   let takeBtn = document.createElement('button');
-  btnClose.addEventListener('click', () => {
-    let inputArray = document.querySelector('.input-canvas');
-    let closeN = Number(inputClose.value) || 3;
+  btnClose.addEventListener(
+    'click',
+    (funCan = () => {
+      let inputArray = document.querySelector('.input-canvas');
+      let closeN = Number(inputClose.value) || 3;
 
-    //верхнее ограничение для красивой визуальной состовляющей
-    if (closeN < 2) closeN = 2;
-    if (closeN > 22) closeN = 22;
-    if (screen.width < 880) {
-      if (closeN > 15) closeN = 12;
+      let attention = document.querySelector('.attention');
+      attention.textContent = 'для расчета кратчайших путей нажмите - "рассчитать"!';
+
+      //верхнее ограничение для красивой визуальной состовляющей
+      if (closeN < 2) closeN = 2;
+      if (closeN > 22) closeN = 22;
+      if (screen.width < 880) {
+        if (closeN > 15) closeN = 12;
+      }
+
+      createInputMatrix(closeN, inputArray);
+
+      let btnsBlock = document.querySelector('.close-btns');
+      takeBtn.classList.add(`btn-calc`);
+      takeBtn.classList.add(`btn`);
+      takeBtn.classList.add(`calc`);
+      takeBtn.textContent = 'рассчитать';
+      btnsBlock.append(takeBtn);
+
+      takeBtn.addEventListener('click', () => {
+        clearCanvas();
+        let matrix = createMatrix(closeN, closeN);
+        calcCanvasStep(closeN);
+        takeProperties(matrix);
+        let startMatrix = JSON.parse(JSON.stringify(matrix));
+
+        matrix = floydWarshallAlgorithm(matrix); // алгоритм изменяет начальную матрицу
+        window.coordsArray = paintArrayOfPoints(matrix);
+
+        CalcExistingEdge(startMatrix);
+        addTextToPoints();
+        addTextToEdge(startMatrix);
+
+        let matrixTabble = document.querySelector('.table-floyd');
+        tableClearVisualFull('table-floyd');
+        createTable(
+          matrix,
+          matrixTabble,
+          'floyd-cell',
+          'floyd',
+          'floyd-mode',
+          startMatrix
+        );
+      });
+    })
+  );
+  // -- вспомогательные функции для модуля 3
+  function takeProperties(matrix, mod = 'floyd') {
+    let cellArray = document.querySelectorAll('.close-cell');
+
+    if (mod != 'floyd') cellArray = document.querySelectorAll('.descr-num');
+    for (let i = 0; i < cellArray.length; ++i) {
+      let x, y;
+      if (mod == 'descr') {
+        y = Number(cellArray[i].classList[2].split('-')[2]);
+        x = Number(cellArray[i].classList[2].split('-')[1]);
+      } else {
+        y = Number(cellArray[i].classList[2].split('-')[1]);
+        x = Number(cellArray[i].classList[2].split('-')[2]);
+      }
+      if (mod != 'floyd' && Number(cellArray[i].value) != 1) {
+        cellArray[i].value = 0;
+      }
+      matrix[x][y] = Number(cellArray[i].value) || 0;
+
+      if (
+        (Number(cellArray[i].value) == 0 ||
+          Number(cellArray[i].value) == null ||
+          Number(cellArray[i].value) == undefined ||
+          Number(cellArray[i].value) == NaN) &&
+        mod == 'floyd'
+      ) {
+        matrix[x][y] = Infinity;
+      }
+      if (x == y && mod == 'floyd') matrix[x][y] = 0;
     }
 
+    return matrix;
+  }
+  function createInputMatrix(closeN, inputArray) {
+    /// внедряем ручное заполнение двоичной матрицы
     inputArray.innerHTML = '';
-
     for (let i = 0; i < closeN; ++i) {
       let inputStroke = document.createElement('div');
       inputArray.append(inputStroke);
@@ -317,52 +424,6 @@ canvas.height = canvas.width;
         }
       }
     }
-
-    let btnsBlock = document.querySelector('.close-btns');
-    takeBtn.classList.add(`btn-calc`);
-    takeBtn.classList.add(`btn`);
-    takeBtn.classList.add(`calc`);
-    takeBtn.textContent = 'рассчитать';
-    btnsBlock.append(takeBtn);
-
-    takeBtn.addEventListener('click', () => {
-      clearCanvas();
-      let matrix = createMatrix(closeN, closeN);
-      calcCanvasStep(closeN);
-      takeProperties(matrix);
-      let startMatrix = JSON.parse(JSON.stringify(matrix));
-
-      matrix = floydWarshallAlgorithm(matrix); // алгоритм изменяет начальную матрицу
-      window.coordsArray = paintArrayOfPoints(matrix);
-
-      CalcExistingEdge(startMatrix);
-      addTextToPoints();
-      addTextToEdge(startMatrix);
-
-      let matrixTabble = document.querySelector('.table-floyd');
-      tableClearVisualFull('table-floyd');
-      createTable(matrix, matrixTabble, 'floyd-cell', 'floyd', 'floyd-mode', startMatrix);
-    });
-  });
-  // -- вспомогательные функции для модуля 3
-  function takeProperties(matrix) {
-    let cellArray = document.querySelectorAll('.close-cell');
-    for (let i = 0; i < cellArray.length; ++i) {
-      let y = Number(cellArray[i].classList[2].split('-')[1]);
-      let x = Number(cellArray[i].classList[2].split('-')[2]);
-
-      matrix[x][y] = Number(cellArray[i].value) || 0;
-      if (
-        Number(cellArray[i].value) == 0 ||
-        Number(cellArray[i].value) == null ||
-        Number(cellArray[i].value) == undefined ||
-        Number(cellArray[i].value) == NaN
-      ) {
-        matrix[x][y] = Infinity;
-      }
-      if (x == y) matrix[x][y] = 0;
-    }
-    console.log(matrix);
   }
 }
 //основная логика ↑↑↑
@@ -372,14 +433,17 @@ canvas.height = canvas.width;
 function showPlenty() {
   let inputPlenty = document.querySelector('.form-plenty');
   let btnPlenty = document.querySelector('.btn-plenty');
-  btnPlenty.addEventListener('click', () => {
-    let mainPlanty = inputPlenty.value;
-    let out = document.querySelector('.plenty-output');
+  btnPlenty.addEventListener(
+    'click',
+    (funPlent = () => {
+      let mainPlanty = inputPlenty.value;
+      let out = document.querySelector('.plenty-output');
 
-    out.innerHTML = `|   ${String(searchSubsets(mainPlanty))
-      .split(',')
-      .join('<span class="accent0"> | </span>')}  |`;
-  });
+      out.innerHTML = `|   ${String(searchSubsets(mainPlanty))
+        .split(',')
+        .join('<span class="accent0"> | </span>')}  |`;
+    })
+  );
 }
 
 //
@@ -604,11 +668,11 @@ function getRandomArbitrary(min, max) {
 let at = 1;
 let bt = 1;
 let time = 820;
-setInterval(function () {
-  at > 5 ? (at = 1) : at++;
-  bt++;
-  aniTxt(at);
-}, time);
+// setInterval(function () {
+//   at > 5 ? (at = 1) : at++;
+//   bt++;
+//   aniTxt(at);
+// }, time);
 
 function aniTxt(a) {
   let txtPole = document.querySelector('.txt-paint');
@@ -636,3 +700,5 @@ function aniTxt(a) {
   }
   txtPole.innerHTML = bufTxt;
 }
+
+// }

@@ -11,6 +11,7 @@
     display: flex;
     justify-content: space-evenly;
   }
+  .close-start-box *,
   .close-btns * {
     width: 45%;
   }
@@ -55,11 +56,13 @@
   .form-close {
     width: 100%;
   }
+
   .close-btns {
     flex-direction: column;
     margin: 0;
     width: 100%;
   }
+  .close-start-box *,
   .close-btns * {
     width: 100%;
   }
@@ -91,6 +94,20 @@
   animation-timing-function: linear;
   animation-duration: 11s;
   animation-iteration-count: infinite;
+}
+.btn-calc {
+  animation-name: scale;
+  animation-timing-function: linear;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+}
+@keyframes scale {
+  0% {
+    box-shadow: 0 0 0 1px transparent;
+  }
+  50% {
+    box-shadow: 0 0 0 4px #99fbb7;
+  }
 }
 
 @keyframes shadow {
