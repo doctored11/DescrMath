@@ -21,6 +21,9 @@
     flex-direction: column;
     align-items: center;
   }
+  .input-box {
+    width: 100%;
+  }
 }
 @media (max-width: 600px) {
   .frame {

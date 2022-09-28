@@ -95,18 +95,21 @@ function checkDiagonal(matrix, direction = 'main', mode) {
 задания 3,4 выполняются одной функцией (как и задания 1,2).
 
 ```js
-function checkSymmetry(matrix, mode = '0') {
+function checkSymmetry(matrix, mode = 'n0') {
   let buf;
 
   for (let y = 0; y < matrix.length; ++y) {
     for (let x = 0; x < matrix[0].length; ++x) {
-      mode === 'anti' && x != y && matrix[x][y] != 0
-        ? (buf = reverse(matrix[y][x]))
-        : (buf = matrix[y][x]);
+      buf = 0;
+      if (mode == 'anti') {
+        x != y && matrix[x][y] != 0
+          ? (buf = reverse(matrix[y][x]))
+          : (buf = matrix[x][y]);
+      }
 
       if (mode === 'a' && x != y) {
         buf = reverse(matrix[y][x]);
-      } else if (mode == '0') {
+      } else if (mode == 'n0') {
         buf = matrix[y][x];
       }
 
@@ -144,3 +147,94 @@ function checkTransit(matrix) {
 ```
 
 На вход функции _checkTransit_ подается симметричная матрица, на выходе будет возвращен 1, если матрица транзитивна и 0 если нет.
+
+---
+
+###Блок 2
+
+#### Задание 1
+
+> Найдите все подмножества множества с помощью алгоритма Грея
+
+Для поиска всех подмножеств, создается единичная матрица по алгоритму Грея.
+
+```js
+function generateTableGray(n) {
+  if (n <= 0) return;
+
+  let arr = [];
+
+  //cтартовый патерн
+  arr.push('0');
+  arr.push('1');
+
+  let i, j;
+  for (i = 2; i < 1 << n; i = i << 1) {
+    for (j = i - 1; j >= 0; j--) arr.push(arr[j]);
+    for (j = 0; j < i; j++) arr[j] = '0' + arr[j];
+    for (j = i; j < 2 * i; j++) arr[j] = '1' + arr[j];
+  }
+
+  return arr;
+}
+```
+
+На вход функции _generateTableGray_ подается длина исходного множества, на выходе мы получаем единичную матрицу Грея.
+
+```js
+function searchSubsets(set) {
+  //на вход строку без разделителей( сплошную)
+  let graysArray = generateTableGray(set.length);
+  let filterArray = [];
+  for (let i = 0; i < graysArray.length; ++i) {
+    let bufferArray = graysArray[i].split('');
+    let buf = [];
+    for (let n = 0; n < set.length; ++n) {
+      if (bufferArray[n] == 1) buf.push(set[n]);
+    }
+
+    buf = String(buf);
+    buf = buf.split(',').join('  ');
+    console.log(buf);
+    filterArray.push(buf);
+  }
+  console.log(filterArray);
+  String(filterArray).split(',').join('-');
+  return filterArray;
+}
+```
+
+На вход функции _searchSubsets_ подается множество, затем определяется его длина и с помощью функции _generateTableGray_ создается нужная таблица Грея.
+Затем сопоставляется каждая строка из таблицы грея и исходное множество, символы на месте которых расположены единицы остаются и формируют подмножество, остальные символы в подмножество вклюбчены не будут.
+На выходе мы получаем все подмножества исходного множества.
+
+---
+
+###Блок 3
+####Задание 1
+
+> С помощью алгоритма Флойда-Уоршалла найдите кратчайшие пути между точками. Заполните матрицу.
+
+```js
+function floydWarshallAlgorithm(matrix) {
+  let numberOfPoints = matrix.length;
+  for (let k = 0; k < numberOfPoints; ++k) {
+    for (let i = 0; i < numberOfPoints; ++i) {
+      for (let j = 0; j < numberOfPoints; ++j) {
+        if (matrix[i][j] > matrix[i][k] + matrix[k][j]) {
+          matrix[i][j] = matrix[i][k] + matrix[k][j];
+        }
+      }
+    }
+  }
+  return matrix;
+}
+```
+
+На вход функция принимает квадратную матрицу, входе выполнения алгоритма матрица будет изменена и возвращена.
+
+---
+
+<br>
+
+_#11_

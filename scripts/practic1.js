@@ -20,22 +20,17 @@ canvas.width = window.screen.width * 0.7;
 canvas.height = canvas.width;
 
 {
-  let Xmatrix = [
-    [1, 0, 0],
-    [0, 1, 1],
-    [0, 1, 1],
-  ];
-  checkTransit(Xmatrix);
-
   //events
   let randomMatrixBtn = document.querySelector('.ub__btn-random-generate');
 
   let inputN = document.querySelector('.form-control');
-
+  let btnCheck = document.querySelector('.check-descr-matrix');
   randomMatrixBtn.addEventListener(
     'click',
     (funRM = () => {
       X = Number(inputN.value) || 2;
+      if (X < 2) X++;
+      if (X > 16) X = 10;
       console.log(X);
       Y = X;
 
@@ -45,10 +40,10 @@ canvas.height = canvas.width;
       tableClearVisualFull('table-rand');
       createTable(matrix, randMatrix);
       matrixStatusCheck(matrix);
+      btnCheck.classList.remove('d-none');
     })
   );
 
-  let btnCheck = document.querySelector('.check-descr-matrix');
   btnCheck.addEventListener('click', () => {
     X = Number(inputN.value) || 2;
     if (X < 2) X++;
@@ -109,7 +104,7 @@ canvas.height = canvas.width;
     checkDiagonal(matrix, 'main', 1)
       ? (statusMessage[1].innerHTML = '<span class="accent-txt"> рефлексивна</span>')
       : (statusMessage[1].textContent = 'условия рефлексивности не выполненны');
-    checkSymmetry(matrix, '')
+    checkSymmetry(matrix)
       ? (statusMessage[2].innerHTML = '<span class="accent-txt">симметрична</span>')
       : (statusMessage[2].textContent = 'не симметрична');
     checkSymmetry(matrix, 'anti')
@@ -119,7 +114,7 @@ canvas.height = canvas.width;
       ? (statusMessage[4].innerHTML = '<span class="accent-txt">асимметрична</span>')
       : (statusMessage[4].textContent = 'не асимметрична');
 
-    if (checkSymmetry(matrix, '') && checkDiagonal(matrix, 'main', 1)) {
+    if (checkSymmetry(matrix) && checkDiagonal(matrix, 'main', 1)) {
       checkTransit(matrix)
         ? (statusMessage[5].innerHTML = '<span class="accent-txt">транзитивна</span>')
         : (statusMessage[5].textContent = 'не транзитивна');
@@ -181,22 +176,26 @@ canvas.height = canvas.width;
     return 1;
   }
 
-  function checkSymmetry(matrix, mode = '0') {
+  function checkSymmetry(matrix, mode = 'n0') {
     let buf;
 
     for (let y = 0; y < matrix.length; ++y) {
       for (let x = 0; x < matrix[0].length; ++x) {
-        mode === 'anti' && x != y && matrix[x][y] != 0
-          ? (buf = reverse(matrix[y][x]))
-          : (buf = matrix[y][x]);
+        buf = 0;
+        if (mode == 'anti') {
+          x != y && matrix[x][y] != 0
+            ? (buf = reverse(matrix[y][x]))
+            : (buf = matrix[x][y]); // поменял x y местами!
+        }
 
         if (mode === 'a' && x != y) {
           buf = reverse(matrix[y][x]);
-        } else if (mode == '0') {
+        } else if (mode == 'n0') {
           buf = matrix[y][x];
         }
 
         if (matrix[x][y] != buf) {
+          //добавил х!=y - проверить!
           console.log('не симметрична относительно главной');
           return 0;
         }
@@ -283,22 +282,6 @@ canvas.height = canvas.width;
 }
 {
   //алгоритм флойда
-
-  function getMinFloyd(matrix) {
-    console.log(matrix);
-    let n = matrix.length;
-    for (let k = 0; k < n; ++k) {
-      for (let i = 0; i < n; ++i) {
-        for (let j = 0; j < n; ++j) {
-          if (matrix[i][k] < Infinity && matrix[k][j] < Infinity) {
-            matrix[i][j] = Math.min(matrix[i][j], matrix[i][k] + matrix[k][j]);
-            console.log(` из ${k} в ${j} =  ${matrix[i][j]}`);
-          }
-        }
-      }
-    }
-    console.log('стоп');
-  }
 
   //
   function floydWarshallAlgorithm(matrix) {
@@ -668,11 +651,11 @@ function getRandomArbitrary(min, max) {
 let at = 1;
 let bt = 1;
 let time = 820;
-// setInterval(function () {
-//   at > 5 ? (at = 1) : at++;
-//   bt++;
-//   aniTxt(at);
-// }, time);
+setInterval(function () {
+  at > 5 ? (at = 1) : at++;
+  bt++;
+  aniTxt(at);
+}, time);
 
 function aniTxt(a) {
   let txtPole = document.querySelector('.txt-paint');
