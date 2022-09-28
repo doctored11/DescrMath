@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <link rel="stylesheet" href="../css/media.css" />
+
+    <script defer src="../scripts/practic1.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <h2 class="logo">
+        <span class="shadow-flick flicker">#</span> Дискретная математика
+      </h2>
+      <div class="txt-paint"></div>
+    </header>
+    <!-- <section class="task-section">
+      <div class="frame">
+      <div class="txt-paint">
+
+      </div>
+      
+    </section> -->
+
+    <section class="task-section">
+      <div class="frame">
+        <p class="simple-txt">
+          В&nbsp;первом задание случайная дискретная матрица проверяется на&nbsp;<span
+            class="simple-decoration"
+            >рефлексивность</span
+          >, <span class="simple-decoration">антирефлексивность</span>,
+          <span class="simple-decoration">симметричность</span>,
+          <span class="simple-decoration">антисимметричность</span>
+          и&nbsp;<span class="simple-decoration">транзитивность</span>.
+        </p>
+        <p class="simple-txt">
+          Что&nbsp;бы узнать <span class="simple-decoration">рефлексивна</span>&nbsp;ли
+          матрица, алгоритм проверяет ее&nbsp;<span class="semantic"
+            >главную диагональ</span
+          >
+          на&nbsp;<span class="semantic">наличие единиц</span>, если на&nbsp;<span
+            class="semantic"
+            >главной диагонали нет нулей</span
+          >, то&nbsp;матрица <span class="simple-decoration">рефлексивна</span>.<br />
+          Чтобы проверить матрицу на
+          <span class="simple-decoration">антирефлексивность</span>, нужно проверить
+          <span class="semantic">главную диагональ на отсутствие единиц</span>.
+        </p>
+        <p class="simple-txt">
+          Чтобы сказать что квадратная матрица
+          <span class="simple-decoration">симметрична</span>, нужно проверить
+          ее&nbsp;<span class="semantic">симметричные элементы</span> относительно главной
+          диагонали <span class="semantic">на&nbsp;равенство</span>
+        </p>
+        <p class="simple-txt">
+          Для проверки на&nbsp;
+          <span class="simple-decoration">антисимметричность</span> единичной квадратной
+          матрицы нужно проверить каждую ячейку
+          <span class="semantic">симметричную ячейке</span> со значением<span
+            class="simple-decoration"
+          >
+            "1"</span
+          >
+          на <span class="semantic">равенство с нулем.</span>
+        </p>
+        <p class="simple-txt">
+          Для проверки квадратной единичной матрицы на&nbsp;
+          <span class="simple-decoration">транзитивность</span>, нужно постараться...
+        </p>
+        <p class="simple-txt">
+          Для проверки матрицы на&nbsp;вышеперечисленные свойства,
+          <span class="semantic">введите размерность</span>
+          матрицы в&nbsp;соответствующее поле и&nbsp;<span class="semantic"
+            >нажмите сгенирировать</span
+          >. Обратите внимание что вы&nbsp;можете подправить значения ячеек на&nbsp;нужные
+          и&nbsp;нажать&nbsp;&mdash; &rsquo;проверить&rsquo;, для проверки новой матрицы.
+          Если ваше значение будет отличным от&nbsp;1&nbsp;и&nbsp;0, оно будет заменено
+          на&nbsp;ноль!
+        </p>
+        <!-- <div class="filters__settings d-none"></div> -->
+      </div>
+    </section>
+    <section class="randmatrix-block task-section">
+      <div class="frame">
+        <div class="randmatrix-block__user-block ub input-box">
+          <form
+            action="javascript:funRM();"
+            id="filter-form"
+            autocomplete="off"
+            method="post"
+            class="contact-form__form form-add form-n"
+          >
+            <div class="form__input-box form__n">
+              <input
+                type="number"
+                class="form__input1 form-control"
+                placeholder="размерность матрицы"
+                autocomplete="off"
+                name="n"
+                id="n"
+              />
+            </div>
+          </form>
+          <button type="button" class="ub__btn-random-generate btn-gen btn">
+            Сгенерировать
+          </button>
+        </div>
+        <div class="rendmatrix-block-output out-box">
+          <div class="">
+            <div class="">
+              <table class="table-rand">
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </table>
+            </div>
+            <button class="check-descr-matrix btn btn--white d-none">проверить</button>
+          </div>
+          <div class="staus-box">
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+            <p class="message status">.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="plenty task-section">
+      <div class="frame">
+        <div class="content-box">
+          <p class="simple-txt">
+            Для нахождения всех
+            <span class="simple-decoration">подмножеств</span> множества с&nbsp;помощью
+            алгоритма Грея, нужно
+            <span class="semantic">построить последовательность</span> всех 2&circ;n
+            n-битных кодов, в&nbsp;которой любые два соседних кода различаются ровно
+            в&nbsp;одном разряде. Затем
+            <span class="semantic">сопоставить построчно единицы</span>
+            из&nbsp;последовательности Грея
+            <span class="semantic"
+              >с&nbsp;символами исходного множества. Символы наложенные на&nbsp;единицы
+              образуют искомые подмножества</span
+            >
+          </p>
+        </div>
+        <div class="input-box">
+          <form
+            action="javascript:funPlent();"
+            id="filter-form"
+            autocomplete="off"
+            method="post"
+            class="contact-form__form form-add"
+          >
+            <div class="form__input-box form__plenty">
+              <input
+                type="text"
+                class="form__input1 form-plenty"
+                placeholder="Ваше множество"
+                autocomplete="off"
+                name="plenty"
+                id="plenty"
+              />
+            </div>
+          </form>
+
+          <button class="btn-plenty btn">Найти</button>
+        </div>
+        <div class="plenty-output">____ .</div>
+      </div>
+    </section>
+    <section class="closure task-section">
+      <div class="frame">
+        <div class="content-box">
+          <p class="simple-txt">
+            Алгоритм Флойда Уоршелла&nbsp;&mdash; это алгоритм поиска
+            <span class="simple-decoration">кратчайших путей</span>
+            во&nbsp;взвешенном графе с&nbsp;положительным или отрицательным весом ребер
+            (но&nbsp;без отрицательных циклов). За&nbsp;одно выполнение алгоритма будут
+            найдены
+            <span class="simple-decoration">длины (суммарные веса) кратчайших путей</span>
+            между всеми парами вершин. Единственная ситуация с&nbsp;которой
+            не&nbsp;справляется алгоритм&nbsp;&mdash;
+            <span class="simple-decoration">отрицательные петли</span>.
+            <span class="simple-decoration">Отрицательная петля</span>&nbsp;&mdash; круг
+            который можно проходить бесконечно уменьшая путь с&nbsp;каждым его
+            прохождением.
+          </p>
+          <p class="simple-txt">
+            <span class="simple-decoration">Вес ребра</span> может быть любым,
+            <span class="semantic">ноль или пустая ячейка</span> обозначают
+            <span class="semantic">отсутствие пути</span>. В&nbsp;сгенерированной таблице
+            <span class="new">розовым цветом</span> помечаются
+            <span class="simple-decoration">кратчайшие непрямые пути</span>
+            найденные по&nbsp;алгоритму Флойда Уоршелла,
+            <span class="changed">синим цветом</span> те&nbsp;
+            <span class="simple-decoration"
+              >пути, которые оказались короче прямых путей</span
+            >
+            и&nbsp;были перезаписаны в&nbsp;заполненные пользователем ячейки
+          </p>
+          <p class="simple-txt">
+            <span class="semantic">Введите желаемую размерность </span>таблицы
+            и&nbsp;<span class="semantic"
+              >нажмите&nbsp;&mdash; &laquo;построить&raquo;</span
+            >, заполните пустые ячейки любыми целочисленными значениями, обратите внимание
+            что нули и&nbsp;пустые ячейки будут обозначать отсутствие пути. После
+            заполнения матрицы
+            <span class="semantic">нажмите&nbsp;&mdash; &laquo;рассчитать&raquo;</span>,
+            для нахождения минимальных путей по&nbsp;алгоритму Флойда Уоршелла
+          </p>
+        </div>
+
+        <div class="close-input-box">
+          <div class="input-box">
+            <form
+              action="javascript:funCan();"
+              id="filter-form"
+              autocomplete="off"
+              class="contact-form__form form-add"
+            >
+              <div class="form__input-box form__close">
+                <input
+                  type="number"
+                  class="form__input1 form-close"
+                  placeholder="размерность матрицы"
+                  autocomplete="off"
+                  name="plenty"
+                  id="plenty"
+                />
+              </div>
+            </form>
+            <div class="close-start-box">
+              <button class="btn-close btn">Построить</button>
+            </div>
+          </div>
+          <div class="active-zone">
+            <form action="#" id="input-canvas" autocomplete="off" class="input-canvas">
+              <div class=""></div>
+            </form>
+          </div>
+          <p class="attention"></p>
+          <div class="center-box">
+            <table class="table-floyd">
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="close-btns"></div>
+      </div>
+      <!-- </div> -->
+    </section>
+    <section class="task-section canvas-section">
+      <canvas class="canvas"></canvas>
+    </section>
+
+    <footer></footer>
+    <script></script>
+  </body>
+</html>
